@@ -69,7 +69,7 @@ private:
 
 int main()
 {
-	cout << "Test text, sorry)";
+	return 0;
 }
 
 
