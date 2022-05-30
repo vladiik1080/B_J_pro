@@ -16,14 +16,13 @@ public:
 	{
 		CLUBS, DIAMONDS, HEARTS, SPADES
 	};
-
+	Card(rank r = ACE, suit s = SPADES, bool ifu = true);
+	int getValue() const;
+	void Flip();
 private:
 	rank m_Rank;
 	suit m_Suit;
 	bool m_IsFaceUp;
-	Card(rank Rank, suit Suit, bool IsFaceUp);
-	int getValue() const;
-	void Flip();
 };
 
 Card::Card(rank Rank, suit Suit, bool IsFaceUp)
@@ -55,11 +54,70 @@ void Card::Flip()
 class Hand
 {
 public:
-
+	Hand();
+	virtual ~Hand();
+	void Add(Card* pCard);
+	void Clear();
+	int getTotal() const;
 
 private:
-
+	vector <Card*> m_Cards;
 };
+
+Hand::Hand()
+{
+	m_Cards.reserve(7);
+}
+
+Hand::~Hand()
+{
+	Clear();
+}
+
+void Hand::Add(Card* pCard)
+{
+	m_Cards.push_back(pCard);
+}
+
+void Hand::Clear()
+{
+	vector<Card*>::iterator iter = m_Cards.begin();
+	for (iter = m_Cards.begin(); iter != m_Cards.end(); ++iter)
+	{
+		delete* iter;
+		*iter = 0;
+	}
+	m_Cards.clear();
+}
+
+int Hand::getTotal() const
+{
+	if (m_Cards.empty()) return 0;
+
+	if (m_Cards[0]->getValue() == 0)
+	{
+		return 0;
+	}
+	int total = 0;
+	vector<Card*>::const_iterator iter;
+	for (iter = m_Cards.begin(); iter != m_Cards.end(); ++iter)
+	{
+		total += (*iter)->getValue();
+	}
+	bool containsAce = false;
+	for (iter = m_Cards.begin(); iter != m_Cards.end(); ++iter)
+	{
+		if ((*iter)->getValue() == Card::ACE)
+		{
+			containsAce = true;
+		}
+	}
+	if (containsAce && total <= 11)
+	{
+		total += 10;
+	}
+	return total;
+}
 
 class Deck :public Hand
 {
